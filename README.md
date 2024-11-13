@@ -162,19 +162,19 @@ To run the script automatically when you log in:
          <key>ProgramArguments</key>
          <array>
              <string>/bin/bash</string>
-             <string>/path/to/your/ethernet-route-setup.sh</string>
+             <string>/path/to/your/ethernet_route_setup.sh</string>
          </array>
          <key>RunAtLoad</key>
          <true/>
          <key>StandardOutPath</key>
-         <string>/tmp/ethernet-route-setup.log</string>
+         <string>/tmp/ethernet_route_setup.sh.log</string>
          <key>StandardErrorPath</key>
-         <string>/tmp/ethernet-route-setup.err</string>
+         <string>/tmp/ethernet_route_setup.sh.err</string>
      </dict>
      </plist>
      ```
 
-     - **Replace** `/path/to/your/ethernet-route-setup.sh` with the actual path to your script.
+     - **Replace** `/path/to/your/ethernet_route_setup.sh.sh` with the actual path to your script.
 
 2. **Load the Launch Agent**:
 
@@ -200,7 +200,7 @@ To run the script automatically when you log in:
 - **Testing**:
 
   - Use the dry-run mode to test the script without making changes.
-  - Check the output logs (`/tmp/ethernet-route-setup.log` and `/tmp/ethernet-route-setup.err`) for any errors.
+  - Check the output logs (`/tmp/ethernet_route_setup.sh.log` and `/tmp/ethernet_route_setup.sh.err`) for any errors.
 
 - **Multiple Ethernet Interfaces**:
 
@@ -217,7 +217,7 @@ To run the script automatically when you log in:
 - **Script Fails to Add Routes**:
 
   - Verify that you have the necessary administrative privileges.
-  - Ensure that the domains in `domains.conf` are correct and reachable.
+  - Ensure that the domains in `domains.conf` and MAC address in `mac_address.conf` are correct and reachable.
 
 - **Desktop Notifications Not Appearing**:
 
