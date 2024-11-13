@@ -3,6 +3,15 @@
 # ethernet_route_setup.sh - A script to add routes and update /etc/hosts for specified domains,
 # with an option to auto-detect the active Ethernet interface or use a specified MAC address.
 
+# Color codes
+RED='\033[0;31m'
+ORANGE='\033[0;33m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+
 # Exit immediately if a command exits with a non-zero status
 set -e
 
@@ -28,15 +37,22 @@ function check_dependencies() {
 }
 
 # ==============================
-# 2. User-Friendly Output with Colors
+# 2. User-Friendly Output with Colors and ASCII Art
 # ==============================
 
-# Color codes
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+echo -e "${ORANGE}=========================================================="
+echo -e "                Ethernet Route Setup Script"
+echo -e "--------------------------------------------------------"
+echo -e "Starting a script written by Abdullah Alhaider"
+echo -e "Version: 1.0.0"
+echo -e "--------------------------------------------------------"
+echo -e "Please visit:"
+echo -e "https://github.com/cs4alhaider/ethernet-route-setup"
+echo -e "for more information, documentation and updates."
+echo -e "--------------------------------------------------------"
+echo -e "This script helps configure network routes and hosts"
+echo -e "for specified domains using Ethernet interfaces."
+echo -e "==========================================================${NC}"
 
 # ==============================
 # 3. Command-Line Help and Usage Information
@@ -103,7 +119,15 @@ if [ ! -f "$DOMAINS_FILE" ]; then
 fi
 
 MAC_ADDRESS=$(cat "$MAC_ADDRESS_FILE" | xargs)
-IFS=$'\n' read -d '' -r -a domains < "$DOMAINS_FILE"
+mapfile -t domains < "$DOMAINS_FILE" 2>/dev/null || domains=($(grep . "$DOMAINS_FILE"))
+
+echo -e "${GREEN}✅ Loaded MAC address:${NC}"
+echo -e "${GREEN}   • $MAC_ADDRESS\n${NC}"
+echo -e "${GREEN}✅ Loaded domains:${NC}"
+for i in "${!domains[@]}"; do
+  echo -e "${GREEN}   $((i+1)). ${domains[$i]}${NC}"
+done
+echo
 
 # ==============================
 # 5. Sudo Credential Caching
@@ -113,7 +137,11 @@ IFS=$'\n' read -d '' -r -a domains < "$DOMAINS_FILE"
 sudo -v
 
 # Keep the sudo timestamp updated while the script runs
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+while true; do
+  sudo -n true
+  sleep 60
+  kill -0 "$$" || exit
+done 2>/dev/null &
 
 # ==============================
 # 6. Idempotency Functions
