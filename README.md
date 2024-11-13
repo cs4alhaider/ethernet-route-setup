@@ -87,7 +87,7 @@ A script to route specific domains through the active Ethernet interface while r
 2. **Make the Script Executable**:
 
    ```bash
-   chmod +x ethernet-route-setup.sh
+   chmod +x ethernet_route_setup.sh
    ```
 
 3. **Configure Domains**:
