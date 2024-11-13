@@ -92,7 +92,7 @@ A script to route specific domains through the active Ethernet interface while r
 
 3. **Configure Domains**:
 
-   - Edit the `config/domains.conf` file and list your specific domains, one per line.
+    Edit the `config/domains.conf` file and list your specific domains, one per line.
 
      Example `domains.conf`:
 
@@ -103,7 +103,7 @@ A script to route specific domains through the active Ethernet interface while r
      ```
  4. **Configure Your Device MAC Address**:
 
-   - Edit the `config/mac_address.conf` file and put specific MAC address, this will be used if you didn't run the script with `--auto-detect` flag.
+    Edit the `config/mac_address.conf` file and put specific MAC address, this will be used if you didn't run the script with `--auto-detect` flag.
 
      Example `mac_address.conf`:
 
@@ -116,31 +116,31 @@ A script to route specific domains through the active Ethernet interface while r
 - **Run the Script**:
 
   ```bash
-  ./ethernet-route-setup.sh
+  ./ethernet_route_setup.sh
   ```
 
 - **Dry Run Mode** (No changes made):
 
   ```bash
-  ./ethernet-route-setup.sh --dry-run
+  ./ethernet_route_setup.sh --dry-run
   ```
 
 - **Specify a Custom Configuration Directory**:
 
   ```bash
-  ./ethernet-route-setup.sh --config-dir /path/to/config
+  ./ethernet_route_setup.sh --config-dir /path/to/config
   ```
 
 - **Auto-Detect Ethernet Interface**:
 
   ```bash
-  ./ethernet-route-setup.sh --auto-detect
+  ./ethernet_route_setup.sh --auto-detect
   ```
 
 - **Display Help Information**:
 
   ```bash
-  ./ethernet-route-setup.sh -h
+  ./ethernet_route_setup.sh -h
   ```
 
 ## Automate at Login (Optional)
