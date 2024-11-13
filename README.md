@@ -28,7 +28,7 @@ A script to route specific domains through the active Ethernet interface while r
 ## What is the Hosts File?
 
 <details>
-  <summary id="what-is-the-hosts-file"><strong>Understanding Host files</strong></summary>
+  <summary id="what-is-the-hosts-file"><strong>Understanding Hosts files</strong></summary>
 
   
   The **hosts file** is a plain text file on your computer that maps domain names (like `example.com`) to IP addresses. It serves as a local, manual way to control how your computer resolves certain domain names without relying on an external DNS (Domain Name System) server.
@@ -77,25 +77,19 @@ A script to route specific domains through the active Ethernet interface while r
 
 ## Installation
 
-1. **Clone the Repository**:
+1. **Clone the Repository and Navigate to the Directory**:
 
    ```bash
-   git clone https://github.com/cs4alhaider/ethernet-route-setup.git
+   git clone --depth 1 https://github.com/cs4alhaider/ethernet-route-setup.git && cd ethernet-route-setup
    ```
-
-2. **Navigate to the Directory**:
-
-   ```bash
-   cd ethernet-route-setup
-   ```
-
-3. **Make the Script Executable**:
+   
+2. **Make the Script Executable**:
 
    ```bash
    chmod +x ethernet-route-setup.sh
    ```
 
-4. **Configure Domains**:
+3. **Configure Domains**:
 
    - Edit the `config/domains.conf` file and list your specific domains, one per line.
 
@@ -105,6 +99,15 @@ A script to route specific domains through the active Ethernet interface while r
      intranet.company.com
      app.company.com
      service.company.com
+     ```
+ 4. **Configure Your Device MAC Address**:
+
+   - Edit the `config/mac_address.conf` file and put specific MAC address, this will be used if you didn't run the script with `--auto-detect` flag.
+
+     Example `mac_address.conf`:
+
+     ```
+     c4:41:1c:76:40:fe
      ```
 
 ## Usage
@@ -139,7 +142,7 @@ A script to route specific domains through the active Ethernet interface while r
   ./ethernet-route-setup.sh -h
   ```
 
-## Automate at Login
+## Automate at Login (Optional)
 
 To run the script automatically when you log in:
 
