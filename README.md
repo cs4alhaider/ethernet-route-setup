@@ -25,9 +25,12 @@ A script to route specific domains through the active Ethernet interface while r
 - **Desktop Notifications**: Displays a notification upon script completion.
 - **Performance Measurement**: Displays the script execution time.
 
-<details>
-  <summary id="what-is-the-hosts-file"><strong>What is the Hosts File?</strong></summary>
+## What is the Hosts File?
 
+<details>
+  <summary id="what-is-the-hosts-file"><strong>Understanding Host files</strong></summary>
+
+  
   The **hosts file** is a plain text file on your computer that maps domain names (like `example.com`) to IP addresses. It serves as a local, manual way to control how your computer resolves certain domain names without relying on an external DNS (Domain Name System) server.
 
   In macOS and Linux systems, the hosts file is typically located at `/etc/hosts`. Windows has a similar file in a different location (`C:\Windows\System32\drivers\etc\hosts`).
@@ -63,22 +66,14 @@ A script to route specific domains through the active Ethernet interface while r
   ```
 
   would make sure that every time `intranet.company.com` is accessed on your machine, it goes to the IP `10.0.0.5`, ensuring the connection is direct and bypasses external DNS lookups.
-
+  <br><br>
 </details>
 
 ## Prerequisites
 
 - **Operating System**: macOS
 - **Administrative Privileges**: The script requires `sudo` access.
-- **Dependencies**:
-  - `dig`
-  - `route`
-  - `grep`
-  - `awk`
-  - `sudo`
-  - `osascript`
-  - `ifconfig`
-  - `networksetup`
+
 
 ## Installation
 
