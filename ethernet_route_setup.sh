@@ -118,7 +118,26 @@ if [ ! -f "$DOMAINS_FILE" ]; then
 fi
 
 MAC_ADDRESS=$(cat "$MAC_ADDRESS_FILE" | xargs)
-mapfile -t domains < "$DOMAINS_FILE" 2>/dev/null || domains=($(grep . "$DOMAINS_FILE"))
+
+function load_domains() {
+  local domains=()
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    # Remove leading/trailing whitespace
+    line=$(echo "$line" | xargs)
+    # Skip empty lines and comments
+    if [[ -n "$line" && ! "$line" =~ ^[[:space:]]*# ]]; then
+      # Remove inline comments and trim
+      domain=$(echo "$line" | sed 's/#.*$//' | xargs)
+      if [[ -n "$domain" ]]; then
+        domains+=("$domain")
+      fi
+    fi
+  done < "$DOMAINS_FILE"
+  echo "${domains[@]}"
+}
+
+# Load domains into an array
+domains=($(load_domains))
 
 echo -e "${GREEN}✅ Loaded MAC address:${NC}"
 echo -e "${GREEN}   • $MAC_ADDRESS\n${NC}"
