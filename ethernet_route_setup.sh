@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ethernet_route_setup.sh - A script to add routes and update /etc/hosts for specified domains,
+# ethernet_route_setup.sh - A script to add routes and update /etc/hosts for specified domains or IP addresses,
 # with an option to auto-detect the active Ethernet interface or use a specified MAC address.
 
 # Color codes
@@ -10,7 +10,6 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
-
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -51,7 +50,7 @@ echo -e "https://github.com/cs4alhaider/ethernet-route-setup"
 echo -e "for more information, documentation and updates."
 echo -e "--------------------------------------------------------"
 echo -e "This script helps configure network routes and hosts"
-echo -e "for specified domains using Ethernet interfaces."
+echo -e "for specified domains or IP addresses using Ethernet interfaces."
 echo -e "==========================================================${NC}"
 
 # ==============================
@@ -123,7 +122,7 @@ mapfile -t domains < "$DOMAINS_FILE" 2>/dev/null || domains=($(grep . "$DOMAINS_
 
 echo -e "${GREEN}✅ Loaded MAC address:${NC}"
 echo -e "${GREEN}   • $MAC_ADDRESS\n${NC}"
-echo -e "${GREEN}✅ Loaded domains:${NC}"
+echo -e "${GREEN}✅ Loaded domains or IP addresses:${NC}"
 for i in "${!domains[@]}"; do
   echo -e "${GREEN}   $((i+1)). ${domains[$i]}${NC}"
 done
@@ -157,8 +156,8 @@ function route_exists() {
 }
 
 function hosts_entry_exists() {
-  local domain="$1"
-  if grep -q "$domain" /etc/hosts; then
+  local entry="$1"
+  if grep -q "$entry" /etc/hosts; then
     return 0
   else
     return 1
@@ -220,31 +219,37 @@ if [ "$AUTO_DETECT" = true ]; then
   fi
 fi
 
-# Loop through each domain
-for domain in "${domains[@]}"; do
-  echo -e "${BLUE}🌐 Processing domain: $domain${NC}"
+# Loop through each entry in domains.conf
+for entry in "${domains[@]}"; do
+  echo -e "${BLUE}🌐 Processing entry: $entry${NC}"
 
-  # Use dig to get the IP address
-  IP=$(dig +short "$domain" | grep -E '^[0-9.]+$' | head -n 1)
+  # Remove any port from the entry, if present
+  IP="${entry%%:*}"  # Extracts IP by removing anything after a colon
 
-  # Check if IP was obtained
-  if [ -z "$IP" ]; then
-    echo -e "${RED}❌ Failed to retrieve IP for $domain. Skipping...${NC}"
-    continue
+  # Check if the entry is an IP address
+  if [[ $IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo -e "${GREEN}✅ Detected IP address: $IP${NC}"
   else
-    echo -e "${GREEN}✅ Retrieved IP for $domain: $IP${NC}"
-  fi
-
-  # Check /etc/hosts to ensure the domain is not already there
-  if hosts_entry_exists "$domain"; then
-    echo -e "${YELLOW}⚠️  $domain is already in /etc/hosts. Skipping hosts file update...${NC}"
-  else
-    echo -e "${BLUE}📝 $domain not found in /etc/hosts. Proceeding to add...${NC}"
-    if [ "$DRY_RUN" = false ]; then
-      echo "$IP $domain" | sudo tee -a /etc/hosts > /dev/null
-      echo -e "${GREEN}✅ Added $domain with IP $IP to /etc/hosts${NC}"
+    # Entry is a domain name; perform DNS lookup
+    IP=$(dig +short "$entry" | grep -E '^[0-9.]+$' | head -n 1)
+    if [ -z "$IP" ]; then
+      echo -e "${RED}❌ Failed to retrieve IP for $entry. Skipping...${NC}"
+      continue
     else
-      echo -e "${YELLOW}DRY RUN: Would add $domain with IP $IP to /etc/hosts${NC}"
+      echo -e "${GREEN}✅ Retrieved IP for $entry: $IP${NC}"
+    fi
+
+    # Only add domain names to /etc/hosts
+    if ! hosts_entry_exists "$entry"; then
+      echo -e "${BLUE}📝 $entry not found in /etc/hosts. Proceeding to add...${NC}"
+      if [ "$DRY_RUN" = false ]; then
+        echo "$IP $entry" | sudo tee -a /etc/hosts > /dev/null
+        echo -e "${GREEN}✅ Added $entry with IP $IP to /etc/hosts${NC}"
+      else
+        echo -e "${YELLOW}DRY RUN: Would add $entry with IP $IP to /etc/hosts${NC}"
+      fi
+    else
+      echo -e "${YELLOW}⚠️  $entry is already in /etc/hosts. Skipping hosts file update...${NC}"
     fi
   fi
 
@@ -256,22 +261,22 @@ for domain in "${domains[@]}"; do
       # Add the route via the active Ethernet interface
       if [ "$DRY_RUN" = false ]; then
         sudo route -n add -host "$IP" -interface "$ETHERNET_INTERFACE"
-        echo -e "${GREEN}✅ Route added for $domain ($IP) via interface $ETHERNET_INTERFACE${NC}"
+        echo -e "${GREEN}✅ Route added for $entry ($IP) via interface $ETHERNET_INTERFACE${NC}"
       else
-        echo -e "${YELLOW}DRY RUN: Would add route for $domain ($IP) via interface $ETHERNET_INTERFACE${NC}"
+        echo -e "${YELLOW}DRY RUN: Would add route for $entry ($IP) via interface $ETHERNET_INTERFACE${NC}"
       fi
     else
       # Add the route via MAC address
       GATEWAY=$(route -n get "$IP" 2>/dev/null | awk '/gateway:/ {print $2}')
       if [ -z "$GATEWAY" ]; then
-        echo -e "${RED}❌ Failed to retrieve gateway for IP $IP of $domain. Skipping route addition...${NC}"
+        echo -e "${RED}❌ Failed to retrieve gateway for IP $IP of $entry. Skipping route addition...${NC}"
         continue
       fi
       if [ "$DRY_RUN" = false ]; then
         sudo route add -host "$IP" "$GATEWAY" -link "$MAC_ADDRESS"
-        echo -e "${GREEN}✅ Route added for $domain ($IP) via gateway $GATEWAY with MAC $MAC_ADDRESS${NC}"
+        echo -e "${GREEN}✅ Route added for $entry ($IP) via gateway $GATEWAY with MAC $MAC_ADDRESS${NC}"
       else
-        echo -e "${YELLOW}DRY RUN: Would add route for $domain ($IP) via gateway $GATEWAY with MAC $MAC_ADDRESS${NC}"
+        echo -e "${YELLOW}DRY RUN: Would add route for $entry ($IP) via gateway $GATEWAY with MAC $MAC_ADDRESS${NC}"
       fi
     fi
   fi
