@@ -25,6 +25,7 @@ A script to route specific domains through the active Ethernet interface while r
 - **Dry-Run Mode**: Allows testing the script without making any changes.
 - **Desktop Notifications**: Displays a notification upon script completion.
 - **Performance Measurement**: Displays the script execution time.
+- **State Management**: Maintains a state file to track added domains and their associated IPs and gateways.
 
 ## What is the Hosts File?
 
@@ -174,7 +175,7 @@ To run the script automatically when you log in:
      </plist>
      ```
 
-     - **Replace** `/path/to/your/ethernet_route_setup.sh.sh` with the actual path to your script.
+     - **Replace** `/path/to/your/ethernet_route_setup.sh` with the actual path to your script.
 
 2. **Load the Launch Agent**:
 
@@ -206,6 +207,22 @@ To run the script automatically when you log in:
 
   - If you have multiple active Ethernet interfaces, the script will use the first one it detects.
   - You can modify the `get_active_ethernet_interface()` function in the script to select a specific interface.
+
+## State Management
+
+The script utilizes a state management system to keep track of the domains, their associated IP addresses, and gateways. This is particularly useful in scenarios where the network connection may be unstable or when the device is restarted. 
+
+When the script runs, it checks the state file to see which domains have already been processed. If a domain is found in the state file, the script can skip re-adding it, thus preventing unnecessary modifications to the `/etc/hosts` file and the routing table. 
+
+### Why State Management is Useful
+
+1. **Persistence Across Sessions**: The state file allows the script to remember which domains have been configured even after a reboot or disconnection. This is crucial because the routing table is reset when the device restarts, and without state management, all configurations would be lost.
+
+2. **Efficiency**: By maintaining a record of processed domains, the script can quickly determine which entries need to be added or updated, reducing the time and resources required to execute the script.
+
+3. **Error Handling**: If there are issues with the network connection, the state file ensures that previously successful configurations remain intact, allowing for a smoother recovery once the connection is restored.
+
+4. **User Control**: Users can manually edit the state file if needed, providing flexibility in managing domain configurations without rerunning the entire script.
 
 ## Troubleshooting
 
