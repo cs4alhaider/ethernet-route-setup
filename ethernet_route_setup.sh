@@ -184,7 +184,7 @@ function get_active_ethernet_interface() {
   if [ ${#active_interfaces[@]} -eq 1 ]; then
     echo "${active_interfaces[0]}"
   elif [ ${#active_interfaces[@]} -gt 1 ]; then
-    echo -e "${YELLOW}⚠️ Multiple active Ethernet interfaces found.${NC}"
+    echo -e "${YELLOW}⚠️  Multiple active Ethernet interfaces found.${NC}"
     # Use the first active interface (modify this if you want to select a specific one)
     echo "${active_interfaces[0]}"
   else
@@ -237,7 +237,7 @@ for domain in "${domains[@]}"; do
 
   # Check /etc/hosts to ensure the domain is not already there
   if hosts_entry_exists "$domain"; then
-    echo -e "${YELLOW}⚠️ $domain is already in /etc/hosts. Skipping hosts file update...${NC}"
+    echo -e "${YELLOW}⚠️  $domain is already in /etc/hosts. Skipping hosts file update...${NC}"
   else
     echo -e "${BLUE}📝 $domain not found in /etc/hosts. Proceeding to add...${NC}"
     if [ "$DRY_RUN" = false ]; then
@@ -250,7 +250,7 @@ for domain in "${domains[@]}"; do
 
   # Determine route addition method based on the --auto-detect flag
   if route_exists "$IP"; then
-    echo -e "${YELLOW}⚠️ Route for $IP already exists. Skipping route addition...${NC}"
+    echo -e "${YELLOW}⚠️  Route for $IP already exists. Skipping route addition...${NC}"
   else
     if [ "$AUTO_DETECT" = true ]; then
       # Add the route via the active Ethernet interface
