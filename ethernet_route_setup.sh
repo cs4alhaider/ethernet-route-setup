@@ -381,6 +381,15 @@ while IFS='|' read -r domain ip gateway || [ -n "$domain" ]; do
             fi
             
             # Route setup logic here...
+            if ! route_exists "$ip"; then
+                echo -e "${BLUE}📝 Route for $domain ($ip) not found. Proceeding to add...${NC}"
+                if [ "$DRY_RUN" = false ]; then
+                    sudo route add -host "$ip" "$gateway" -link "$MAC_ADDRESS"
+                    echo -e "${GREEN}✅ Route added for $domain ($ip) via gateway $gateway with MAC $MAC_ADDRESS${NC}"
+                else
+                    echo -e "${YELLOW}DRY RUN: Would add route for $domain ($ip) via gateway $gateway with MAC $MAC_ADDRESS${NC}"
+                fi
+            fi
         fi
     fi
 done < "$STATE_FILE"
