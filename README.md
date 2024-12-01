@@ -2,9 +2,9 @@
 
 A script to route specific domains through the active Ethernet interface while routing other internet traffic through Wi-Fi on macOS.
 
-⚠️ Warning: Please ensure you fully understand how this script works before using it. Incorrect usage may modify your network configuration in unintended ways, potentially disrupting network connectivity. Proceed with caution and test in a safe environment first.
+> [!CAUTION]
+> Please ensure you fully understand how this script works before using it. Incorrect usage may modify your network configuration in unintended ways, potentially disrupting network connectivity. Proceed with caution and test in a safe environment first.
 
-## Table of Contents
 
 - [Features](#features)
 - [Prerequisites](#prerequisites)
